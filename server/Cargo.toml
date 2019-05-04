@@ -10,3 +10,4 @@ name = "cb-server"
 path = "src/main.rs"
 
 [dependencies]
+tokio = "0.1.19"
