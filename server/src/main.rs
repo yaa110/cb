@@ -50,4 +50,6 @@ fn main() {
     if opts.version {
         print_and_exit(VERSION);
     }
+
+    env_logger::init();
 }
