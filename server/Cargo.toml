@@ -10,4 +10,5 @@ name = "cb-server"
 path = "src/main.rs"
 
 [dependencies]
+gumdrop = "0.5.0"
 tokio = "0.1.19"
