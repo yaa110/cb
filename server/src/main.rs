@@ -1,5 +1,7 @@
 #[macro_use]
 extern crate gumdrop;
+#[macro_use]
+extern crate log;
 
 use gumdrop::Options;
 use std::process::exit;
