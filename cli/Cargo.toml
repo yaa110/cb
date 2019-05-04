@@ -1,0 +1,12 @@
+[package]
+name = "cli"
+version = "0.1.0"
+authors = ["Navid <yaa110@gmail.com>"]
+edition = "2018"
+publish = false
+
+[[bin]]
+name = "cb"
+path = "src/main.rs"
+
+[dependencies]
