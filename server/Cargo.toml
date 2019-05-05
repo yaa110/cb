@@ -12,6 +12,7 @@ path = "src/main.rs"
 [dependencies]
 bytes = "0.4.12"
 clipboard = "0.5.0"
+common = { path = "../common" }
 env_logger = "0.6.1"
 gumdrop = "0.5.0"
 log = "0.4.6"
