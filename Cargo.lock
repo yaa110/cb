@@ -83,6 +83,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "cli"
 version = "0.1.0"
+dependencies = [
+ "bytes 0.4.12 (registry+https://github.com/rust-lang/crates.io-index)",
+ "common 0.1.0",
+ "gumdrop 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "hex 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "clipboard"
