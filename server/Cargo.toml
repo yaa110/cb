@@ -16,5 +16,6 @@ common = { path = "../common" }
 env_logger = "0.6.1"
 futures = "0.1.26"
 gumdrop = "0.5.0"
+hex = "0.3.2"
 log = "0.4.6"
 tokio = "0.1.19"
