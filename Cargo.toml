@@ -3,6 +3,7 @@
 members = [
     "server",
     "cli",
+    "common",
 ]
 
 [profile.release]
