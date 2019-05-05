@@ -24,6 +24,14 @@ struct AppOptions {
     /// Clears the content of clipboard
     #[options(help = "Clears the content of clipboard", short = "c", long = "clear")]
     pub clear: bool,
+
+    /// Do not print newline after pasting the content
+    #[options(
+        help = "Do not print newline after pasting the content",
+        short = "r",
+        long = "raw"
+    )]
+    pub raw: bool,
 }
 
 fn main() {
@@ -40,7 +48,12 @@ fn main() {
     if opts.paste {
         match cli::get() {
             Some(content) => {
-                exit!("{}", content);
+                if opts.raw {
+                    print!("{}", content);
+                    std::process::exit(0);
+                } else {
+                    exit!("{}", content);
+                }
             }
             None => {
                 oops!("An error occurred");
