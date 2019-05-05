@@ -54,7 +54,9 @@ fn main() {
         if let Err(e) = daemonize.start() {
             fatal!("unable to run as daemon: {}", e);
         }
-    } else if let Err(e) = ctrlc::set_handler(move || {
+    }
+
+    if let Err(e) = ctrlc::set_handler(move || {
         let _ = fs::remove_file(socket_path);
         std::process::exit(0);
     }) {
