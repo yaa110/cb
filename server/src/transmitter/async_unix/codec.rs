@@ -3,6 +3,7 @@ use bytes::BytesMut;
 use common::constants::{BUFFER_SIZE, SPLITTER, SPLITTER_LEN};
 use hex;
 use std::error::Error;
+use std::net::Shutdown;
 use tokio::net::UnixStream;
 use tokio::prelude::{Async, AsyncRead, AsyncWrite, Poll, Stream};
 
@@ -64,6 +65,9 @@ impl Codec {
                 return Err(String::from("writing zero bytes to the socket"));
             }
             let _ = self.write_buf.split_to(size);
+            if self.write_buf.is_empty() {
+                let _ = self.socket.shutdown(Shutdown::Both);
+            }
         }
         Ok(Async::Ready(()))
     }
