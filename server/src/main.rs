@@ -3,6 +3,7 @@ extern crate log;
 #[macro_use]
 extern crate common;
 
+use daemonize::Daemonize;
 use gumdrop::Options;
 use server::{setup_clipboard, AsyncUnix, Transmitter};
 use std::fs;
@@ -51,6 +52,14 @@ fn main() {
 
     if opts.version {
         exit!("{}", VERSION);
+    }
+
+    if opts.daemon {
+        let daemonize = Daemonize::new().user("nobody").group("daemon").umask(0o000);
+
+        if let Err(e) = daemonize.start() {
+            fatal!("unable to run as daemon: {}", e);
+        }
     }
 
     let socket_path_str = opts.socket.unwrap_or_else(|| String::from("./cb.sock"));
