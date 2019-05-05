@@ -1,10 +1,12 @@
 #[macro_use]
-extern crate gumdrop;
-#[macro_use]
 extern crate log;
+#[macro_use]
+extern crate common;
 
 use gumdrop::Options;
-use std::process::exit;
+use server::{setup_clipboard, AsyncUnix, Transmitter};
+use std::fs;
+use std::path::Path;
 
 /// Crate version
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -34,22 +36,33 @@ struct AppOptions {
     pub daemon: bool,
 }
 
-/// Prints a message to stdout and exits with the status code of `0`
-fn print_and_exit(message: &str) {
-    println!("{}", message);
-    exit(0);
-}
-
 fn main() {
     let opts = AppOptions::parse_args_default_or_exit();
 
+    env_logger::init();
+
+    if let Err(e) = setup_clipboard() {
+        fatal!("unable to setup clipboard: {}", e);
+    }
+
     if opts.help {
-        print_and_exit(AppOptions::usage());
+        exit!("{}", AppOptions::usage());
     }
 
     if opts.version {
-        print_and_exit(VERSION);
+        exit!("{}", VERSION);
     }
 
-    env_logger::init();
+    let socket_path_str = opts.socket.unwrap_or_else(|| String::from("./cb.sock"));
+    let socket_path = Path::new(socket_path_str.as_str());
+
+    if socket_path.exists() {
+        if let Err(e) = fs::remove_file(socket_path) {
+            fatal!("unable to delete UNIX domain socket file: {}", e);
+        }
+    }
+
+    if let Err(e) = AsyncUnix::new(socket_path).and_then(Transmitter::listen) {
+        fatal!("unable to start transmitter: {}", e);
+    }
 }
