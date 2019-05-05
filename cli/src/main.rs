@@ -37,5 +37,16 @@ fn main() {
         exit!("{}", VERSION);
     }
 
+    if opts.paste {
+        match cli::get() {
+            Some(content) => {
+                exit!("{}", content);
+            }
+            None => {
+                oops!("An error occurred");
+            }
+        }
+    }
+
     // TODO
 }
