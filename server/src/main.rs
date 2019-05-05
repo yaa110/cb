@@ -23,15 +23,6 @@ struct AppOptions {
     #[options(help = "Prints the version", short = "V", long = "version")]
     pub version: bool,
 
-    /// The path of unix domain socket, the default value is `./cb.sock`
-    #[options(
-        help = "Sets the path of unix domain socket, the default value is `./cb.sock`",
-        short = "s",
-        long = "socket",
-        meta = "PATH"
-    )]
-    pub socket: Option<String>,
-
     /// The app will run as a daemon if it is `true`
     #[options(help = "Runs the app as a daemon", short = "d", long = "daemon")]
     pub daemon: bool,
@@ -62,9 +53,7 @@ fn main() {
         }
     }
 
-    let socket_path_str = opts.socket.unwrap_or_else(|| String::from("./cb.sock"));
-    let socket_path = Path::new(socket_path_str.as_str());
-
+    let socket_path = Path::new("/tmp/cb.sock");
     if socket_path.exists() {
         if let Err(e) = fs::remove_file(socket_path) {
             fatal!("unable to delete UNIX domain socket file: {}", e);
