@@ -1,6 +1,6 @@
 use bytes::buf::BufMut;
 use bytes::BytesMut;
-use common::message::{BUFFER_SIZE, SPLITTER, SPLITTER_LEN};
+use common::constants::{BUFFER_SIZE, SPLITTER, SPLITTER_LEN};
 use hex;
 use std::error::Error;
 use tokio::net::UnixStream;

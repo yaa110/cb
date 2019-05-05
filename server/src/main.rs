@@ -3,6 +3,7 @@ extern crate log;
 #[macro_use]
 extern crate common;
 
+use common::constants::SOCKET_PATH;
 use ctrlc;
 use daemonize::Daemonize;
 use gumdrop::Options;
@@ -46,7 +47,7 @@ fn main() {
         fatal!("unable to setup clipboard: {}", e);
     }
 
-    let socket_path = Path::new("/tmp/cb.sock");
+    let socket_path = Path::new(SOCKET_PATH);
 
     if opts.daemon {
         let daemonize = Daemonize::new().user("nobody").group("daemon").umask(0o000);
