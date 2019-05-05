@@ -10,3 +10,4 @@ name = "cb"
 path = "src/main.rs"
 
 [dependencies]
+bytes = "0.4.12"
