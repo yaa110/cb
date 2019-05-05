@@ -32,18 +32,18 @@ struct AppOptions {
 fn main() {
     let opts = AppOptions::parse_args_default_or_exit();
 
-    env_logger::init();
-
-    if let Err(e) = setup_clipboard() {
-        fatal!("unable to setup clipboard: {}", e);
-    }
-
     if opts.help {
         exit!("{}", AppOptions::usage());
     }
 
     if opts.version {
         exit!("{}", VERSION);
+    }
+
+    env_logger::init();
+
+    if let Err(e) = setup_clipboard() {
+        fatal!("unable to setup clipboard: {}", e);
     }
 
     let socket_path = Path::new("/tmp/cb.sock");
