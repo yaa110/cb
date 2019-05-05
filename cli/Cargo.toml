@@ -11,3 +11,4 @@ path = "src/main.rs"
 
 [dependencies]
 bytes = "0.4.12"
+common = { path = "../common" }
