@@ -1,6 +1,9 @@
 /// The UNIX domain socket path
 pub const SOCKET_PATH: &str = "/tmp/cb.sock";
 
+/// The PID of server
+pub const SERVER_PID: &str = "/tmp/cb.pid";
+
 /// The buffer size to read from socket
 pub const BUFFER_SIZE: usize = 2048;
 
