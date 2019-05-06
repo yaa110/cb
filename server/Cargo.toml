@@ -6,7 +6,7 @@ edition = "2018"
 publish = false
 
 [[bin]]
-name = "cb-server"
+name = "cbs"
 path = "src/main.rs"
 
 [dependencies]
