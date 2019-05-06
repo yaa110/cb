@@ -6,41 +6,12 @@ extern crate common;
 use common::constants::SOCKET_PATH;
 use ctrlc;
 use daemonize::Daemonize;
-use gumdrop::Options;
+use server::internal::get_user_group;
 use server::{setup_clipboard, AsyncUnix, Transmitter};
 use std::fs;
 use std::path::Path;
 
-/// Crate version
-const VERSION: &str = env!("CARGO_PKG_VERSION");
-
-/// Represents parsed options from command line
-#[derive(Options)]
-struct AppOptions {
-    /// Prints the help message if it is `true`
-    #[options(help = "Prints the help message", short = "h", long = "help")]
-    pub help: bool,
-
-    /// Prints the version if it is `true`
-    #[options(help = "Prints the version", short = "V", long = "version")]
-    pub version: bool,
-
-    /// The app will run as a daemon if it is `true`
-    #[options(help = "Runs the app as a daemon", short = "d", long = "daemon")]
-    pub daemon: bool,
-}
-
 fn main() {
-    let opts = AppOptions::parse_args_default_or_exit();
-
-    if opts.help {
-        exit!("{}", AppOptions::usage());
-    }
-
-    if opts.version {
-        exit!("{}", VERSION);
-    }
-
     env_logger::init();
 
     if let Err(e) = setup_clipboard() {
@@ -49,12 +20,20 @@ fn main() {
 
     let socket_path = Path::new(SOCKET_PATH);
 
-    if opts.daemon {
-        let daemonize = Daemonize::new().user("nobody").group("daemon").umask(0o000);
-
-        if let Err(e) = daemonize.start() {
-            fatal!("unable to run as daemon: {}", e);
+    let (username, group) = match get_user_group() {
+        Ok(ug) => ug,
+        Err(e) => {
+            fatal!("{}", e);
         }
+    };
+
+    let daemonize = Daemonize::new()
+        .user(username.as_str())
+        .group(group.as_str())
+        .umask(0o000);
+
+    if let Err(e) = daemonize.start() {
+        fatal!("unable to run as daemon: {}", e);
     }
 
     if let Err(e) = ctrlc::set_handler(move || {
