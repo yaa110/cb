@@ -71,6 +71,14 @@ fn main() {
         oops!("[error] unable to connect to server");
     });
 
+    if opts.clear {
+        if handler.clear() {
+            std::process::exit(0);
+        } else {
+            oops!("[error] an error occurred");
+        }
+    }
+
     if opts.paste {
         match handler.get() {
             Some(content) => {
