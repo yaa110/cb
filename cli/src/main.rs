@@ -8,9 +8,11 @@ use cli::Handler;
 use common::constants::SOCKET_PATH;
 use common::errors::StringErrorResult;
 use gumdrop::Options;
+use std::io::{self, Read};
 use std::os::unix::net::UnixStream;
 use std::process::Command;
-use std::io::{self, Read};
+use std::thread::sleep;
+use std::time::Duration;
 
 /// Represents parsed options from command line
 #[derive(Options)]
@@ -55,7 +57,13 @@ fn try_connect(try_run: bool) -> Result<UnixStream, String> {
         Ok(stream) => Ok(stream),
         err => {
             if try_run {
-                let _ = Command::new("cbs").spawn().error_to_string()?;
+                let _ = Command::new("cbs")
+                    .spawn()
+                    .error_to_string()?
+                    .wait()
+                    .error_to_string()?;
+                // FIXME: find a way to remove sleep and ensure that `cbs` is running
+                sleep(Duration::from_secs(1));
                 try_connect(false)
             } else {
                 err.error_to_string()
@@ -75,10 +83,11 @@ fn main() {
         exit!("{}", VERSION);
     }
 
-    let mut handler = Handler::new(if let Ok(stream) = try_connect(true) {
-        stream
-    } else {
-        oops!("[error] unable to connect to server");
+    let mut handler = Handler::new(match try_connect(true) {
+        Ok(stream) => stream,
+        Err(e) => {
+            oops!("[error] unable to connect to server: {}", e);
+        }
     });
 
     if opts.clear {
@@ -121,7 +130,7 @@ fn main() {
     }
 
     if handler.set(Some(buffer)) {
-            std::process::exit(0);
+        std::process::exit(0);
     } else {
         oops!("[error] an error occurred");
     }
