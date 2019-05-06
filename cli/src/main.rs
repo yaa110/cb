@@ -10,6 +10,7 @@ use common::errors::StringErrorResult;
 use gumdrop::Options;
 use std::os::unix::net::UnixStream;
 use std::process::Command;
+use std::io::{self, Read};
 
 /// Represents parsed options from command line
 #[derive(Options)]
@@ -37,6 +38,15 @@ struct AppOptions {
         long = "raw"
     )]
     pub raw: bool,
+
+    /// Stores `text` into clipboard
+    #[options(
+        help = "Store TEXT into clipboard",
+        meta = "TEXT",
+        short = "t",
+        long = "text"
+    )]
+    pub text: Option<String>,
 }
 
 /// Tries to connect to server
@@ -55,7 +65,7 @@ fn try_connect(try_run: bool) -> Result<UnixStream, String> {
 }
 
 fn main() {
-    let opts = AppOptions::parse_args_default_or_exit();
+    let mut opts = AppOptions::parse_args_default_or_exit();
 
     if opts.help {
         exit!("{}", AppOptions::usage());
@@ -95,5 +105,24 @@ fn main() {
         }
     }
 
-    // TODO read content from stdin and set content
+    if opts.text.is_some() {
+        if handler.set(opts.text.take()) {
+            std::process::exit(0);
+        } else {
+            oops!("[error] an error occurred");
+        }
+    }
+
+    let mut buffer = String::new();
+    let stdin = io::stdin();
+    let mut handle = stdin.lock();
+    if let Err(e) = handle.read_to_string(&mut buffer) {
+        oops!("[error] unable to read piped text: {}", e);
+    }
+
+    if handler.set(Some(buffer)) {
+            std::process::exit(0);
+    } else {
+        oops!("[error] an error occurred");
+    }
 }
