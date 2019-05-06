@@ -7,7 +7,7 @@ use common::constants::SOCKET_PATH;
 use ctrlc;
 use daemonize::Daemonize;
 use server::internal::get_user_group;
-use server::{setup_clipboard, AsyncUnix, Transmitter};
+use server::{AsyncUnix, Transmitter};
 use std::fs;
 use std::path::Path;
 
@@ -18,10 +18,6 @@ fn clean() {
 
 fn main() {
     env_logger::init();
-
-    if let Err(e) = setup_clipboard() {
-        fatal!("unable to setup clipboard: {}", e);
-    }
 
     let socket_path = Path::new(SOCKET_PATH);
 

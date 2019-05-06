@@ -1,24 +1,12 @@
 use bytes::BytesMut;
 use clipboard::{ClipboardContext, ClipboardProvider};
-use common::errors::StringErrorResult;
 use common::message::{Action, Response};
 use std::convert::TryFrom;
 use std::convert::TryInto;
-use std::sync::RwLock;
-
-static mut CLIPBOARD: Option<RwLock<ClipboardContext>> = None;
-
-pub fn setup_clipboard() -> Result<(), String> {
-    unsafe {
-        CLIPBOARD = Some(RwLock::new(
-            ClipboardProvider::new().map_err(|e| e.description().to_string())?,
-        ));
-    }
-    Ok(())
-}
 
 fn handle_action_by_error(data: BytesMut) -> Result<Response, String> {
-    let mut ctx = unsafe { CLIPBOARD.as_ref().unwrap().write().error_to_string()? };
+    let mut ctx: ClipboardContext =
+        ClipboardProvider::new().map_err(|e| e.description().to_string())?;
     let content = match Action::try_from(data)? {
         Action::Clear => {
             ctx.set_contents(String::new())
