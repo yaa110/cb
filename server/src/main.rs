@@ -3,7 +3,7 @@ extern crate log;
 #[macro_use]
 extern crate common;
 
-use common::constants::{SERVER_PID, SOCKET_PATH};
+use common::constants::SOCKET_PATH;
 use ctrlc;
 use daemonize::Daemonize;
 use server::internal::get_user_group;
@@ -14,7 +14,6 @@ use std::path::Path;
 /// Removes created files
 fn clean() {
     let _ = fs::remove_file(Path::new(SOCKET_PATH));
-    let _ = fs::remove_file(Path::new(SERVER_PID));
 }
 
 fn main() {
@@ -36,7 +35,6 @@ fn main() {
     let daemonize = Daemonize::new()
         .user(username.as_str())
         .group(group.as_str())
-        .pid_file(SERVER_PID)
         .umask(0o000);
 
     if let Err(e) = daemonize.start() {
