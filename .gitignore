@@ -2,3 +2,5 @@
 **/*.rs.bk
 /.vscode
 /cb.sock
+/cbs
+/cb
