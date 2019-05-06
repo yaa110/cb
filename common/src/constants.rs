@@ -1,5 +1,5 @@
 /// The UNIX domain socket path
-pub const SOCKET_PATH: &'static str = "/tmp/cb.sock";
+pub const SOCKET_PATH: &str = "/tmp/cb.sock";
 
 /// The buffer size to read from socket
 pub const BUFFER_SIZE: usize = 2048;
