@@ -4,7 +4,10 @@ extern crate common;
 /// Crate version
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
+use cli::Handler;
+use common::constants::SOCKET_PATH;
 use gumdrop::Options;
+use std::os::unix::net::UnixStream;
 
 /// Represents parsed options from command line
 #[derive(Options)]
@@ -45,8 +48,14 @@ fn main() {
         exit!("{}", VERSION);
     }
 
+    let mut handler = Handler::new(if let Ok(stream) = UnixStream::connect(SOCKET_PATH) {
+        stream
+    } else {
+        oops!("[error] unable to connect to server");
+    });
+
     if opts.paste {
-        match cli::get() {
+        match handler.get() {
             Some(content) => {
                 if opts.raw {
                     print!("{}", content);
@@ -56,10 +65,10 @@ fn main() {
                 }
             }
             None => {
-                oops!("An error occurred");
+                oops!("[error] an error occurred");
             }
         }
     }
 
-    // TODO
+    // TODO read content from stdin and set content
 }
