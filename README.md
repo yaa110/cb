@@ -1,5 +1,7 @@
 # cb
 
+[![Build Status](https://travis-ci.org/yaa110/cb.svg?branch=master)](https://travis-ci.org/yaa110/cb)
+
 Command line interface to manage clipboard
 
 ## How to install
