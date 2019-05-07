@@ -8,6 +8,8 @@ use cli::Handler;
 use common::constants::SOCKET_PATH;
 use common::errors::StringErrorResult;
 use gumdrop::Options;
+use server;
+use std::env::current_exe;
 use std::io::{self, Read};
 use std::os::unix::net::UnixStream;
 use std::process::Command;
@@ -33,6 +35,10 @@ struct AppOptions {
     #[options(help = "Clears the content of clipboard", short = "c", long = "clear")]
     pub clear: bool,
 
+    /// Starts server as a daemon
+    #[options(help = "Starts server as a daemon", short = "s", long = "server")]
+    pub server: bool,
+
     /// Do not print newline after pasting the content
     #[options(
         help = "Do not print newline after pasting the content",
@@ -57,12 +63,13 @@ fn try_connect(try_run: bool) -> Result<UnixStream, String> {
         Ok(stream) => Ok(stream),
         err => {
             if try_run {
-                let _ = Command::new("cbs")
+                let _ = Command::new(current_exe().unwrap())
+                    .arg("-s")
                     .spawn()
                     .error_to_string()?
                     .wait()
                     .error_to_string()?;
-                // FIXME: find a way to remove sleep and ensure that `cbs` is running
+                // FIXME: find a way to remove sleep and ensure that server is running
                 sleep(Duration::from_secs(1));
                 try_connect(false)
             } else {
@@ -74,6 +81,10 @@ fn try_connect(try_run: bool) -> Result<UnixStream, String> {
 
 fn main() {
     let mut opts = AppOptions::parse_args_default_or_exit();
+
+    if opts.server {
+        server::start();
+    }
 
     if opts.help {
         exit!("{}", AppOptions::usage());
