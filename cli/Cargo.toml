@@ -4,6 +4,9 @@ version = "0.1.0"
 authors = ["Navid <yaa110@gmail.com>"]
 edition = "2018"
 publish = false
+license = "MIT/Apache-2.0"
+repository = "https://github.com/yaa110/cb"
+description = "Command line interface to manage clipboard"
 
 [dependencies]
 bytes = "0.4.12"
