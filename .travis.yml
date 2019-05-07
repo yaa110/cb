@@ -2,6 +2,9 @@ sudo: true
 
 language: rust
 
+os:
+  - linux
+
 before_install:
   - sudo apt-get update
   - sudo apt-get install -y xorg-dev build-essential
@@ -9,3 +12,12 @@ before_install:
 script:
   - make
   - cargo test --verbose --all
+
+deploy:
+  provider: releases
+  api_key:
+    secure: $GITHUB_TOKEN
+  file: cb
+  skip_cleanup: true
+  on:
+    tags: true
