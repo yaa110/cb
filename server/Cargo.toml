@@ -5,10 +5,6 @@ authors = ["Navid <yaa110@gmail.com>"]
 edition = "2018"
 publish = false
 
-[[bin]]
-name = "cbs"
-path = "src/main.rs"
-
 [dependencies]
 bytes = "0.4.12"
 clipboard = "0.5.0"
