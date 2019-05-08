@@ -10,7 +10,7 @@ use common::errors::StringErrorResult;
 use gumdrop::Options;
 use server;
 use std::env::current_exe;
-use std::io::{self, Read};
+use std::io::{self, BufRead};
 use std::os::unix::net::UnixStream;
 use std::process::Command;
 use std::thread::sleep;
@@ -133,14 +133,12 @@ fn main() {
         }
     }
 
-    let mut buffer = String::new();
-    let stdin = io::stdin();
-    let mut handle = stdin.lock();
-    if let Err(e) = handle.read_to_string(&mut buffer) {
-        oops!("[error] unable to read piped text: {}", e);
-    }
+    let content = io::stdin().lock().lines().next().map(|x| match x {
+        Ok(c) => c,
+        Err(e) => oops!("[error] unable to read piped text: {}", e),
+    });
 
-    if handler.set(Some(buffer)) {
+    if handler.set(content) {
         std::process::exit(0);
     } else {
         oops!("[error] an error occurred");

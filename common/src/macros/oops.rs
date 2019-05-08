@@ -7,8 +7,8 @@
 /// ```
 #[macro_export]
 macro_rules! oops {
-    ($($arg:tt)*) => {
+    ($($arg:tt)*) => {{
         eprintln!($($arg)*);
         std::process::exit(1);
-    }
+    }}
 }
