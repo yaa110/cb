@@ -1,5 +1,6 @@
 use crate::errors::StringErrorResult;
 use bincode::{deserialize, serialize};
+use bytes::Bytes;
 use bytes::BytesMut;
 use std::convert::TryFrom;
 use std::convert::TryInto;

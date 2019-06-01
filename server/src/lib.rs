@@ -13,14 +13,15 @@ pub use transmitter::*;
 use common::constants::SOCKET_PATH;
 use ctrlc;
 use daemonize::Daemonize;
-use internal::get_user_group;
+use internal::UserGroup;
 use std::fs;
 use std::path::Path;
 use transmitter::{AsyncUnix, Transmitter};
 
 /// Removes created files
-fn clean() {
+fn clean_and_exit() {
     let _ = fs::remove_file(Path::new(SOCKET_PATH));
+    std::process::exit(0)
 }
 
 /// Starts server as a daemon
@@ -29,7 +30,7 @@ pub fn start() {
 
     let socket_path = Path::new(SOCKET_PATH);
 
-    let (username, group) = match get_user_group() {
+    let user_group = match UserGroup::get() {
         Ok(ug) => ug,
         Err(e) => {
             fatal!("{}", e);
@@ -37,18 +38,15 @@ pub fn start() {
     };
 
     let daemonize = Daemonize::new()
-        .user(username.as_str())
-        .group(group.as_str())
+        .user(user_group.user.as_str())
+        .group(user_group.group.as_str())
         .umask(0o000);
 
     if let Err(e) = daemonize.start() {
         fatal!("unable to run as daemon: {}", e);
     }
-
-    if let Err(e) = ctrlc::set_handler(move || {
-        clean();
-        std::process::exit(0);
-    }) {
+    // FIXME Server is daemon process how we can send signal SIGINT ( CTRL+C ) ?
+    if let Err(e) = ctrlc::set_handler(clean_and_exit) {
         fatal!("unable to set handler of CTRL-C signals: {}", e);
     }
 
@@ -61,6 +59,5 @@ pub fn start() {
     if let Err(e) = AsyncUnix::new(socket_path).and_then(Transmitter::listen) {
         fatal!("unable to start transmitter: {}", e);
     }
-
-    clean();
+    clean_and_exit();
 }
