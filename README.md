@@ -10,6 +10,14 @@ Command line interface to manage clipboard
 
 you can download a [pre-compiled executable](https://github.com/yaa110/cb/releases), then you should copy that executable to `/usr/bin` or add it to your `$PATH` env. Do not forget to `chmod +x cb`.
 
+#### Distribution packages
+
+Users of **Arch Linux** can install package from AUR:
+
+* Precompiled release: [cb-bin](https://aur.archlinux.org/packages/cb-bin/) (*Only x64 is supported*)
+* Build latest release: [cb](https://aur.archlinux.org/packages/cb/)
+* Build from master: [cb-git](https://aur.archlinux.org/packages/cb-git/)
+
 ### Build Manually
 
 - Install rust: `curl -sSf https://sh.rustup.rs | sh`
